@@ -1,0 +1,49 @@
+{% load static %}
+
+<style>
+    .menu-item {
+        list-style-type: disc;
+        margin-bottom: 5px;
+    }
+
+    .parent-item {
+        list-style-type: circle;
+        margin-left: 15px;
+    }
+    .active {
+        font-weight: bold;
+        color: darkblue;
+</style>
+<ul>
+    {% if menu_items|length > 0 %}
+        {% for menu_item in menu_items %}
+        {% if menu_item.parent%}
+        {% else%}
+        <li class="menu-item">
+            <a href="{% url 'menu_page' menu_item.url %}">{{ menu_item.title }}</a>
+        </li>
+        {% endif %}
+        {% for parent in menu_item.children.all %}
+            <li class="menu-item parent-item">
+                <a href="{% url 'menu_page' parent.url %}">{{ parent.title }}</a>
+            </li>
+        {% endfor %}
+    {% endfor %}
+    {% else %}
+    {% if menu_items.children.all %}
+        <li class="menu-item active">
+            {{ menu_items.title }}
+        </li>
+        {% for parent in menu_items.children.all %}
+            <li class="menu-item parent-item">
+                <a href="{% url 'menu_page' parent.url %}">{{ parent.title }}</a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <li class="menu-item active">
+            {{ menu_items.title }}
+        </li>
+    {% endif %}
+
+    {% endif %}
+</ul>
